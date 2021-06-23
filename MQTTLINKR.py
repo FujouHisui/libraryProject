@@ -1,4 +1,3 @@
-
 # python3.6
 import random
 
@@ -11,7 +10,7 @@ topic = "/RFID/schoolcard_8266"
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 
-#def connect_mqtt() -> mqtt_client:
+# def connect_mqtt() -> mqtt_client:
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -24,12 +23,17 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
+
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+        received_msg = msg.payload.decode()
+        print(f"Received `{received_msg}` from `{msg.topic}` topic")
+        return received_msg
 
     client.subscribe(topic)
     client.on_message = on_message
+
+
 
 def run():
     client = connect_mqtt()
@@ -37,5 +41,5 @@ def run():
     client.loop_forever()
 
 
-if __name__ == '__main__':
-    run()
+#if __name__ == '__main__':
+#    run()
