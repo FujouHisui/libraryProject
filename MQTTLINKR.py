@@ -24,12 +24,17 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
+
 def subscribe(client: mqtt_client):
-    def on_message(msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+    def on_message(client, userdata, msg):
+        received_msg = msg.payload.decode()
+        print(f"Received `{received_msg}` from `{msg.topic}` topic")
+        return received_msg
 
     client.subscribe(topic)
     client.on_message = on_message
+
+
 
 def run():
     client = connect_mqtt()
@@ -51,3 +56,5 @@ def legit_data(data):
 
 if __name__ == '__main__':
     print(legit_data("P341243")[1])
+#if __name__ == '__main__':
+#    run()

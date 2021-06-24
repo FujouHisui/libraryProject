@@ -67,6 +67,25 @@
     </property>
    </widget>
   </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>310</y>
+     <width>171</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Adobe Devanagari</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>刷卡登录</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -86,8 +105,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Welcome</receiver>
+   <slot>start_student()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>346</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>335</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
+  <signal>get_MQTT_msg()</signal>
   <slot>adminButton_Click()</slot>
+  <slot>start_student()</slot>
  </slots>
 </ui>

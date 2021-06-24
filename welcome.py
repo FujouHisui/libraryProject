@@ -36,9 +36,17 @@ class Ui_Welcome(object):
         self.label_2.setFont(font)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
+        self.pushButton_2 = QtWidgets.QPushButton(Welcome)
+        self.pushButton_2.setGeometry(QtCore.QRect(270, 310, 171, 51))
+        font = QtGui.QFont()
+        font.setFamily("Adobe Devanagari")
+        font.setPointSize(10)
+        self.pushButton_2.setFont(font)
+        self.pushButton_2.setObjectName("pushButton_2")
 
         self.retranslateUi(Welcome)
         self.pushButton.clicked.connect(Welcome.adminButton_Click)
+        self.pushButton_2.clicked.connect(Welcome.start_student)
         QtCore.QMetaObject.connectSlotsByName(Welcome)
 
     def retranslateUi(self, Welcome):
@@ -47,3 +55,4 @@ class Ui_Welcome(object):
         self.pushButton.setText(_translate("Welcome", "管理员"))
         self.label.setText(_translate("Welcome", "欢迎使用图书管理系统"))
         self.label_2.setText(_translate("Welcome", "请刷卡"))
+        self.pushButton_2.setText(_translate("Welcome", "刷卡登录"))
