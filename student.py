@@ -26,7 +26,7 @@ class Ui_StuInfo(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(StuInfo)
-        self.label_2.setGeometry(QtCore.QRect(110, 500, 311, 21))
+        self.label_2.setGeometry(QtCore.QRect(150, 500, 171, 21))
         font = QtGui.QFont()
         font.setFamily("黑体")
         font.setPointSize(12)
@@ -43,9 +43,13 @@ class Ui_StuInfo(object):
         font.setPointSize(12)
         self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
+        self.pushButton_2 = QtWidgets.QPushButton(StuInfo)
+        self.pushButton_2.setGeometry(QtCore.QRect(351, 497, 101, 31))
+        self.pushButton_2.setObjectName("pushButton_2")
 
         self.retranslateUi(StuInfo)
         self.pushButton.clicked.connect(StuInfo.backButton_Click)
+        self.pushButton_2.clicked.connect(StuInfo.optButton_Click)
         QtCore.QMetaObject.connectSlotsByName(StuInfo)
 
     def retranslateUi(self, StuInfo):
@@ -55,3 +59,4 @@ class Ui_StuInfo(object):
         self.label_2.setText(_translate("StuInfo", "借书还书请刷书！"))
         self.pushButton.setText(_translate("StuInfo", "返回主页"))
         self.label_3.setText(_translate("StuInfo", "姓名："))
+        self.pushButton_2.setText(_translate("StuInfo", "借/还"))

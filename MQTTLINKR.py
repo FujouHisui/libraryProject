@@ -1,15 +1,15 @@
-
 # python3.6
 import random
 
 from paho.mqtt import client as mqtt_client
+
+import gui
 
 broker = 'la.hisui.tech'
 port = 1883
 topic = "/RFID/schoolcard_8266"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 100)}'
-
 
 
 def connect_mqtt():
@@ -28,12 +28,11 @@ def connect_mqtt():
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         received_msg = msg.payload.decode()
+        gui.payloads.append(received_msg)
         print(f"Received `{received_msg}` from `{msg.topic}` topic")
-        return received_msg
 
     client.subscribe(topic)
     client.on_message = on_message
-
 
 
 def run():
@@ -43,18 +42,17 @@ def run():
 
 
 def legit_data(data):
+    data = str(data).strip()
     data_type = data[0]
     data_new = data[1:]
     if data_type == "P" or data_type == "B":
         if data_new.isdigit():
             return data_type, data_new
         else:
-            return -1
+            return -1, -1
     else:
-        return -1
+        return -1, -1
 
 
 if __name__ == '__main__':
-    print(legit_data("P341243")[1])
-#if __name__ == '__main__':
-#    run()
+    print((subscribe(connect_mqtt())))
