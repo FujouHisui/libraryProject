@@ -11,7 +11,7 @@ topic = "/RFID/schoolcard_8266"
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 
-#def connect_mqtt() -> mqtt_client:
+
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -25,7 +25,7 @@ def connect_mqtt():
     return client
 
 def subscribe(client: mqtt_client):
-    def on_message(client, userdata, msg):
+    def on_message(msg):
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 
     client.subscribe(topic)
@@ -37,5 +37,17 @@ def run():
     client.loop_forever()
 
 
+def legit_data(data):
+    data_type = data[0]
+    data_new = data[1:]
+    if data_type == "P" or data_type == "B":
+        if data_new.isdigit():
+            return data_type, data_new
+        else:
+            return -1
+    else:
+        return -1
+
+
 if __name__ == '__main__':
-    run()
+    print(legit_data("P341243")[1])
