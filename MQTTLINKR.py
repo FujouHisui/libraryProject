@@ -1,3 +1,4 @@
+
 # python3.6
 import random
 
@@ -10,7 +11,7 @@ topic = "/RFID/schoolcard_8266"
 client_id = f'python-mqtt-{random.randint(0, 100)}'
 
 
-# def connect_mqtt() -> mqtt_client:
+
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -41,5 +42,19 @@ def run():
     client.loop_forever()
 
 
+def legit_data(data):
+    data_type = data[0]
+    data_new = data[1:]
+    if data_type == "P" or data_type == "B":
+        if data_new.isdigit():
+            return data_type, data_new
+        else:
+            return -1
+    else:
+        return -1
+
+
+if __name__ == '__main__':
+    print(legit_data("P341243")[1])
 #if __name__ == '__main__':
 #    run()
