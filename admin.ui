@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Admin</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>290</x>
@@ -38,6 +38,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>580</y>
+     <width>92</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>返回主页</string>
+   </property>
   </widget>
  </widget>
  <resources/>
@@ -74,9 +87,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>Admin</receiver>
+   <slot>backButton_Click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>711</x>
+     <y>589</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>512</x>
+     <y>548</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>stuSearch_Click()</slot>
   <slot>bookSearch_Click()</slot>
+  <slot>backButton_Click()</slot>
  </slots>
 </ui>

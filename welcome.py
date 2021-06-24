@@ -43,6 +43,13 @@ class Ui_Welcome(object):
         font.setPointSize(10)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setObjectName("pushButton_2")
+        self.label_3 = QtWidgets.QLabel(Welcome)
+        self.label_3.setGeometry(QtCore.QRect(240, 380, 221, 31))
+        font = QtGui.QFont()
+        font.setFamily("宋体")
+        font.setPointSize(10)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
 
         self.retranslateUi(Welcome)
         self.pushButton.clicked.connect(Welcome.adminButton_Click)
@@ -56,3 +63,4 @@ class Ui_Welcome(object):
         self.label.setText(_translate("Welcome", "欢迎使用图书管理系统"))
         self.label_2.setText(_translate("Welcome", "请刷卡"))
         self.pushButton_2.setText(_translate("Welcome", "刷卡登录"))
+        self.label_3.setText(_translate("Welcome", "TextLabel"))
