@@ -2,6 +2,7 @@ import sys
 
 from PyQt5 import QtCore
 from PyQt5.QtCore import QThread
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QWidget, QApplication
 
 import MQTTLINKR
@@ -41,10 +42,9 @@ class WelcomeForm(QWidget, Ui_Welcome):
         self.thread.start()
 
     def start_student(self):
-        data = [-1, -1]
         if len(payloads) > 0:
             data = MQTTLINKR.legit_data(payloads[len(payloads) - 1])
-            print(data[1])
+            # print(data[1])
             if data[0] == "P":
                 self.label_3.setVisible(False)
                 payloads.clear()
@@ -94,7 +94,7 @@ class PasswordForm(QWidget, Ui_Password):
             if len(passwd_result) > 0:
                 if self.lineEdit.text() == passwd_result[0]['passwd']:
                     self.sf = StudentForm()
-                    self.sf.show()
+                    self.sf.show_sf(self.stu_id)
                     self.close()
                 else:
                     self.label_2.setStyleSheet("font-color:red")
@@ -118,13 +118,35 @@ class StudentForm(QWidget, Ui_StuInfo):
     def __init__(self):
         super(StudentForm, self).__init__()
         self.setupUi(self)
+        self.title = ["书号", "书名", "借阅日期", "归还日期"]
 
-    def show_sf(self):
+    def show_sf(self, stu_id):
+        self.stu_name = SQLLINK.get_stu_name(stu_id)
+        self.stu_id = stu_id
+        borrow_log = SQLLINK.stu_borrow_log(stu_id)
+        if len(borrow_log) > 0:
+            model = get_model(self.title, borrow_log)
+            self.tableView.setModel(model)
+        self.label.setText("学号：" + self.stu_id)
+        self.label_3.setText("姓名：" + self.stu_name)
         self.show()
 
     def optButton_Click(self):
-        self.cf = ConfirmForm()
-        self.cf.cf_show(1)
+        if len(payloads) > 0:
+            data = MQTTLINKR.legit_data(payloads[len(payloads) - 1])
+            if data[0] == "B":
+                payloads.clear()
+                self.cf = ConfirmForm()
+                self.cf.cf_show(1)
+            else:
+                self.label_2.setText("未检测到书！")
+        else:
+            self.label_2.setText("未检测到书！")
+
+    def refreshButton_Click(self):
+        borrow_log = SQLLINK.stu_borrow_log(self.stu_id)
+        model = get_model(self.title, borrow_log)
+        self.tableView.setModel(model)
 
     def backButton_Click(self):
         self.close()
@@ -151,9 +173,21 @@ class BookSearchForm(QWidget, Ui_BookInfo):
     def __init__(self):
         super(BookSearchForm, self).__init__()
         self.setupUi(self)
+        self.title = ["学号", "姓名", "借阅日期", "归还日期"]
 
     def searchButton_Click(self):
-        None
+        self.pushButton.setEnabled(False)
+        if self.lineEdit.text().isdigit():
+            book_id = self.lineEdit.text()
+            book_name = SQLLINK.get_book_name(book_id)
+            if book_name != None:
+                borrow_log = SQLLINK.book_borrow_log(book_id)
+                if len(borrow_log) > 0:
+                    model = get_model(self.title,borrow_log)
+                    self.tableView.setModel(model)
+                    self.label_2.setText("书名："+book_name)
+        self.pushButton.setEnabled(True)
+
 
     def backButton_Click(self):
         self.close()
@@ -163,14 +197,23 @@ class StudentSearchForm(QWidget, Ui_StudentSearch):
     def __init__(self):
         super(StudentSearchForm, self).__init__()
         self.setupUi(self)
+        self.title = ["书号", "书名", "借阅日期", "归还日期"]
 
     def backButton_Click(self):
         self.close()
 
     def searchButton_Click(self):
-        None
-
-
+        self.pushButton.setEnabled(False)
+        if self.lineEdit.text().isdigit():
+            stu_id = self.lineEdit.text()
+            stu_name = SQLLINK.get_stu_name(stu_id)
+            if stu_name != None:
+                borrow_log = SQLLINK.stu_borrow_log(stu_id)
+                if len(borrow_log) > 0:
+                    model = get_model(self.title, borrow_log)
+                    self.tableView.setModel(model)
+                    self.label_3.setText("姓名："+stu_name)
+        self.pushButton.setEnabled(True)
 
 
 class ConfirmForm(QWidget, Ui_Confirm):
@@ -191,6 +234,17 @@ class ConfirmForm(QWidget, Ui_Confirm):
 
     def noButton_Click(self):
         self.close()
+
+
+def get_model(title, data):
+    model = QStandardItemModel()
+    model.setHorizontalHeaderLabels(title)
+    for row in range(0, len(data)):
+        for column in range(0, len(data[row])):
+            item_data = str(data[row][column])
+            item = QStandardItem(item_data)
+            model.setItem(row, column, item)
+    return model
 
 
 def gui_start():

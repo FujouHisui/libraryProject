@@ -46,10 +46,14 @@ class Ui_StuInfo(object):
         self.pushButton_2 = QtWidgets.QPushButton(StuInfo)
         self.pushButton_2.setGeometry(QtCore.QRect(351, 497, 101, 31))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(StuInfo)
+        self.pushButton_3.setGeometry(QtCore.QRect(549, 96, 92, 28))
+        self.pushButton_3.setObjectName("pushButton_3")
 
         self.retranslateUi(StuInfo)
         self.pushButton.clicked.connect(StuInfo.backButton_Click)
         self.pushButton_2.clicked.connect(StuInfo.optButton_Click)
+        self.pushButton_3.clicked.connect(StuInfo.refreshButton_Click)
         QtCore.QMetaObject.connectSlotsByName(StuInfo)
 
     def retranslateUi(self, StuInfo):
@@ -60,3 +64,4 @@ class Ui_StuInfo(object):
         self.pushButton.setText(_translate("StuInfo", "返回主页"))
         self.label_3.setText(_translate("StuInfo", "姓名："))
         self.pushButton_2.setText(_translate("StuInfo", "借/还"))
+        self.pushButton_3.setText(_translate("StuInfo", "刷新信息"))

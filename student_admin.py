@@ -39,7 +39,7 @@ class Ui_StudentSearch(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(StudentSearch)
-        self.label_3.setGeometry(QtCore.QRect(76, 89, 151, 21))
+        self.label_3.setGeometry(QtCore.QRect(76, 89, 171, 21))
         font = QtGui.QFont()
         font.setFamily("黑体")
         font.setPointSize(12)

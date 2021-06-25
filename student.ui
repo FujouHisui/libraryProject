@@ -109,6 +109,19 @@
     <string>借/还</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>549</x>
+     <y>96</y>
+     <width>92</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>刷新信息</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -144,9 +157,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>StuInfo</receiver>
+   <slot>refreshButton_Click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>598</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>535</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>backButton_Click()</slot>
   <slot>optButton_Click()</slot>
+  <slot>refreshButton_Click()</slot>
  </slots>
 </ui>

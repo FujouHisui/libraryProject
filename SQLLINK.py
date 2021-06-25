@@ -1,8 +1,11 @@
+import datetime
+
 import pymysql
 
-
-
 # 增,添加借书记录
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+
+
 def log_add(stu_id, operation, book_id):
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
@@ -71,16 +74,6 @@ def book_status_change():
     conn.close()
 
 
-
-def search_stu_date(stu_id):  # 输入学号查用户详情，返回用户名和学号
-    sql_select("uname,passwd,stu_id", "user_table", "stu_id = " + stu_id)
-
-
-def search_borrow_log(stu_id):  # 查询借书记录，输入学生学号,返回书的id和书的名字
-    sql_select("borrow_log.book_id,book_table.book_name", "borrow_log inner join book_table",
-               "borrow_log.stu_id = " + stu_id)
-
-
 def search_needretrun(stu_id):  # 输入学号查询代还书籍
     sql_select("borrow_log.book_id,book_table.book_name", "borrow_log inner join book_table",
                "book.table.is_borrowed = 1 and borrow_log.stu_id = " + stu_id)
@@ -94,8 +87,78 @@ def search_passwd(identity, user):
     if identity == 0:
         return sql_select("passwd", "user_table", "is_admin = 0 and stu_id = " + user)
     elif identity == 1:
-        return sql_select("passwd", "user_table", "is_admin = 1 and uname = " + "\""+user+"\"")
+        return sql_select("passwd", "user_table", "is_admin = 1 and uname = " + "\"" + user + "\"")
+
+
+def get_stu_name(stu_id):
+    name_result = sql_select("stu_name", "stu_table", "stu_id = " + stu_id)
+    if len(name_result) > 0:
+        return name_result[0]['stu_name']
+    else:
+        return None
+
+
+def get_book_name(book_id):
+    name_result = sql_select("book_name", "book_table", "book_id = " + book_id)
+    if len(name_result) > 0:
+        return name_result[0]['book_name']
+    else:
+        return None
+
+
+def stu_borrow_log(stu_id):
+    raw_result = sql_select(" book_table.book_id,book_table.book_name,borrow_log.borrow_time,borrow_log.return_time",
+                            "borrow_log inner join book_table",
+                            "borrow_log.book_id = book_table.book_id and borrow_log.stu_id = " + stu_id)
+    if len(raw_result) > 0:
+        result = []
+        for i in range(0, len(raw_result)):
+            temp = []
+            temp.append(raw_result[i]['book_id'])
+            temp.append(raw_result[i]['book_name'])
+            temp.append(str(raw_result[i]['borrow_time']))
+            if raw_result[i]['return_time'] == None:
+                temp.append("未还")
+            else:
+                temp.append(str(raw_result[i]['return_time']))
+            result.append(temp)
+        for row in result:
+            for column in row:
+                print(column)
+        return result
+    else:
+        return None
+
+
+def book_borrow_log(book_id):
+    raw_result = sql_select(" stu_table.stu_id,stu_table.stu_name,borrow_log.borrow_time,borrow_log.return_time",
+                            "borrow_log inner join stu_table",
+                            "borrow_log.stu_id = stu_table.stu_id and borrow_log.book_id = " + book_id)
+    if len(raw_result) > 0:
+        result = []
+        for i in range(0, len(raw_result)):
+            temp = []
+            temp.append(raw_result[i]['stu_id'])
+            temp.append(raw_result[i]['stu_name'])
+            temp.append(str(raw_result[i]['borrow_time']))
+            if raw_result[i]['return_time'] == None:
+                temp.append("未还")
+            else:
+                temp.append(str(raw_result[i]['return_time']))
+            result.append(temp)
+        for row in result:
+            for column in row:
+                print(column)
+        return result
+    else:
+        return None
 
 
 if __name__ == '__main__':
-    print(search_passwd(1, "root")[0]['passwd'])
+    # print(search_passwd(1, "root")[0]['passwd'])
+    # print(get_stu_name("1800300722")[0]['stu_name'])
+    # print(get_book_name("001")[0]['book_name'])
+    # a = stu_borrow_log("1800300708")
+    # print(len(a))
+    # print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    book_borrow_log("1")
