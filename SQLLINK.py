@@ -32,7 +32,7 @@ def sql_delete():
     # 表 条件
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM library.user_table WHERE id = 3")
+    cursor.execute("DELETE FROM library.book_table WHERE book_id = 5")
     conn.commit()
     # 关闭游标
     cursor.close()
@@ -77,24 +77,24 @@ def search_borrow_state(book_id):  # 查询书的状态，输入书的ID，被�
     if len(result) > 0:
         stu_id = result[len(result) - 1]['stu_id']
         return_time = result[len(result) - 1]['return_time']
-        if return_time == None:
-            return 0
-        else:
+        if return_time is None:
             return stu_id
+        else:
+            return 0
     else:
         return -1
 
 
-def book_status_change(book_id):
+def borrow_book(stu_id, book_id):
     # 改
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
-    search_borrow_state(book_id)  # 获取状态，判断状态，为1置零，为零置1，读取数据比较处理
-
-    if search_borrow_state(book_id):
-        cursor.execute("UPDATE book_table  SET is_borrowed = '0' WHERE book_id = " + book_id)
-    else:
-        cursor.execute("UPDATE book_table  SET is_borrowed = '1' WHERE book_id = " + book_id)
+    try:
+        cursor.execute('''INSERT INTO borrow_log (stu_id, book_id, borrow_time, return_time)
+VALUES (''' + stu_id + ''', ''' + book_id + ''', DEFAULT, null)''')
+        cursor.execute("UPDATE book_table SET is_borrowed = 1 WHERE book_id = " + book_id)
+    except pymysql.err.OperationalError:
+        return -1
     conn.commit()
     # 关闭游标
     cursor.close()
@@ -102,17 +102,15 @@ def book_status_change(book_id):
     conn.close()
 
 
-def borrow_log_update(stu_id, book_id):
+def return_book(stu_id, book_id):
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
-    returntime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获得时间数组
-    if search_borrow_state(book_id):  # 判断状态，为零新增，为1修改
-        book_status_change(book_id)
-        cursor.execute(
-            "UPDATE borrow_log  SET return_time = " + returntime + " WHERE book_id = " + book_id + "and stu_id = " + stu_id + "and return_time is null")
-    else:
-        book_status_change(book_id)
-        cursor.execute("insert into borrow_log (stu_id,book_id)VALUES(" + stu_id + "," + book_id + ")")
+    return_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获得时间数组
+    try:
+        cursor.execute("UPDATE borrow_log  SET return_time = \"" + return_time + "\" WHERE book_id = " + book_id + " and stu_id = " + stu_id + " and return_time is null")
+        cursor.execute("UPDATE book_table SET is_borrowed = 0 WHERE book_id = " + book_id)
+    except pymysql.err.OperationalError:
+        return -1
     conn.commit()
     # 关闭游标
     cursor.close()
@@ -191,5 +189,6 @@ def book_borrow_log(book_id):
         return None
 
 
-if __name__ == '__main__':
-    search_borrow_state("2")
+#if __name__ == '__main__':
+#    borrow_book("1800300722","1")
+    #return_book("1800300722","3")

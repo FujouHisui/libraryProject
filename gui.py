@@ -139,12 +139,14 @@ class StudentForm(QWidget, Ui_StuInfo):
                 payloads.clear()
                 borrow_state = SQLLINK.search_borrow_state(self.book_id)
                 if borrow_state != -1:
-                    if borrow_state == 0:
+                    if str(borrow_state) == self.stu_id:
+                        self.label_2.setText("")
                         self.cf = ConfirmForm()
-                        self.cf.show_cf(0)
-                    elif borrow_state == self.stu_id:
+                        self.cf.show_cf(0,self.stu_id,self.book_id)
+                    elif borrow_state == 0:
+                        self.label_2.setText("")
                         self.cf = ConfirmForm()
-                        self.cf.show_cf(1)
+                        self.cf.show_cf(1,self.stu_id,self.book_id)
                     else:
                         self.label_2.setText("此书已被借出！")
             else:
@@ -230,7 +232,9 @@ class ConfirmForm(QWidget, Ui_Confirm):
         super(ConfirmForm, self).__init__()
         self.setupUi(self)
 
-    def show_cf(self, opt):
+    def show_cf(self, opt, stu_id, book_id):
+        self.stu_id = stu_id
+        self.book_id = book_id
         if opt == 1:
             self.opt = "借出"
         elif opt == 0:
@@ -239,6 +243,10 @@ class ConfirmForm(QWidget, Ui_Confirm):
         self.show()
 
     def yesButton_Click(self):
+        if self.opt == "借出":
+            SQLLINK.borrow_book(self.stu_id, self.book_id)
+        elif self.opt == "归还":
+            SQLLINK.return_book(self.stu_id, self.book_id)
         self.close()
 
     def noButton_Click(self):
