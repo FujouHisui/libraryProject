@@ -58,7 +58,7 @@ class WelcomeForm(QWidget, Ui_Welcome):
             self.label_3.setVisible(True)
 
     def listen(self):
-        if (str(MQTTLINKR.subscribe(MQTTLINKR.connect_mqtt())) != ""):
+        if str(MQTTLINKR.subscribe(MQTTLINKR.connect_mqtt())) != "":
             self.mqtt_signal.emit()
 
     def close_wf(self):
@@ -135,9 +135,18 @@ class StudentForm(QWidget, Ui_StuInfo):
         if len(payloads) > 0:
             data = MQTTLINKR.legit_data(payloads[len(payloads) - 1])
             if data[0] == "B":
+                self.book_id = data[1]
                 payloads.clear()
-                self.cf = ConfirmForm()
-                self.cf.cf_show(1)
+                borrow_state = SQLLINK.search_borrow_state(self.book_id)
+                if borrow_state != -1:
+                    if borrow_state == 0:
+                        self.cf = ConfirmForm()
+                        self.cf.show_cf(0)
+                    elif borrow_state == self.stu_id:
+                        self.cf = ConfirmForm()
+                        self.cf.show_cf(1)
+                    else:
+                        self.label_2.setText("此书已被借出！")
             else:
                 self.label_2.setText("未检测到书！")
         else:
@@ -221,7 +230,7 @@ class ConfirmForm(QWidget, Ui_Confirm):
         super(ConfirmForm, self).__init__()
         self.setupUi(self)
 
-    def cf_show(self, opt):
+    def show_cf(self, opt):
         if opt == 1:
             self.opt = "借出"
         elif opt == 0:
