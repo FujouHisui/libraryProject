@@ -2,10 +2,9 @@ import datetime
 
 import pymysql
 
+
+
 # 增,添加借书记录
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-
-
 def log_add(stu_id, operation, book_id):
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
@@ -62,11 +61,43 @@ def sql_select(target, table, search):
     return result
 
 
-def book_status_change():
+def search_stu_date(stu_id):  # 输入学号查用户详情，返回用户名和学号
+    sql_select("uname,passwd,stu_id", "user_table", "stu_id = " + stu_id)
+
+
+def search_borrow_log(stu_id):  # 查询借书记录，输入学生学号,返回书的id和书的名字
+    sql_select(" book_table.book_id,book_table.book_name,borrow_log.borrow_time,borrow_log.return_time", "borrow_log "
+                                                                                                         "inner join "
+                                                                                                         " book_table",
+               "borrow_log.book_id = book_table.book_id and borrow_log.stu_id = " + stu_id)
+
+
+def search_borrow_log_book(book_id):  # 查询借书记录，输入书号,返回书的id和书的名字借阅归还日期
+    sql_select(" book_table.book_id,book_table.book_name,borrow_log.borrow_time,borrow_log.return_time", "borrow_log "
+                                                                                                         "inner join "
+                                                                                                         " book_table",
+               "borrow_log.book_id = book_table.book_id and borrow_log.book_id = " + book_id)
+
+
+def search_needretrun(stu_id):  # 输入学号查询代还书籍
+    sql_select("borrow_log.book_id,book_table.book_name", "borrow_log inner join book_table",
+               "borrow_log.return_time is null and borrow_log.book_id = book_table.book_id and borrow_log.stu_id = " + stu_id)
+
+
+def search_borrow_state(book_id):  # 查询书的状态，输入书的ID，返回1为被借出，返回0为未被借出
+    return sql_select("is_borrowed", "book_table", "book_id = " + book_id)[0]['is_borrowed']
+
+
+def book_status_change(book_id):
     # 改
     conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
     cursor = conn.cursor()
-    cursor.execute('''UPDATE library.user_table t SET t.passwd = 'password' WHERE t.id = 2''')
+    search_borrow_state(book_id)  # 获取状态，判断状态，为1置零，为零置1，读取数据比较处理
+
+    if search_borrow_state(book_id):
+        cursor.execute("UPDATE book_table  SET is_borrowed = '0' WHERE book_id = " + book_id)
+    else:
+        cursor.execute("UPDATE book_table  SET is_borrowed = '1' WHERE book_id = " + book_id)
     conn.commit()
     # 关闭游标
     cursor.close()
@@ -74,13 +105,23 @@ def book_status_change():
     conn.close()
 
 
-def search_needretrun(stu_id):  # 输入学号查询代还书籍
-    sql_select("borrow_log.book_id,book_table.book_name", "borrow_log inner join book_table",
-               "book.table.is_borrowed = 1 and borrow_log.stu_id = " + stu_id)
+def borrow_log_update(stu_id, book_id):
+    conn = pymysql.connect(host='la.hisui.tech', port=3306, user='root', passwd='Yz1UBRM3>qx2_Q+7j#zZ', db='library')
+    cursor = conn.cursor()
+    returntime = datetime.datetime.now()  # 获得时间数组
+    if search_borrow_state(book_id):  # 判断状态，为零新增，为1修改
+        book_status_change(book_id)
+        cursor.execute(
+            "UPDATE borrow_log  SET return_time = " + returntime + " WHERE book_id = " + book_id + "and stu_id = " + stu_id + "and return_time is null")
+    else:
+        book_status_change(book_id)
+        cursor.execute("insert into borrow_log (stu_id,book_id)VALUES(" + stu_id + "," + book_id + ")")
+    conn.commit()
+    # 关闭游标
+    cursor.close()
+    # 关闭连接
+    conn.close()
 
-
-def search_borrow_state(book_id):  # 查询书的状态，输入书的ID，返回1为被借出，返回0为未被借出
-    sql_select("is_borrowed", "book_table", "book = " + book_id)
 
 
 def search_passwd(identity, user):
@@ -155,10 +196,4 @@ def book_borrow_log(book_id):
 
 
 if __name__ == '__main__':
-    # print(search_passwd(1, "root")[0]['passwd'])
-    # print(get_stu_name("1800300722")[0]['stu_name'])
-    # print(get_book_name("001")[0]['book_name'])
-    # a = stu_borrow_log("1800300708")
-    # print(len(a))
-    # print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    book_borrow_log("1")
+    print(search_passwd(1, "root")[0]['passwd'])
