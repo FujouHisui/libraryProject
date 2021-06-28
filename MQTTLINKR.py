@@ -27,9 +27,13 @@ def connect_mqtt():
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        received_msg = msg.payload.decode()
-        gui.payloads.append(received_msg)
-        print(f"Received `{received_msg}` from `{msg.topic}` topic")
+        try:
+            received_msg = msg.payload.decode()
+        except UnicodeDecodeError:
+            print("读卡信息错误")
+        else:
+            gui.payloads.append(received_msg)
+            print(f"Received `{received_msg}` from `{msg.topic}` topic")
 
     client.subscribe(topic)
     client.on_message = on_message

@@ -73,6 +73,11 @@ def search_needretrun(stu_id):  # 输入学号查询待还书籍
 
 
 def search_borrow_state(book_id):  # 查询书的状态，输入书的ID，被借出返回借阅者学号，未被借出返回0
+    result = sql_select("*", "book_table", "book_id = " + book_id)
+    if len(result) > 0:
+        stat = result[len(result) - 1]['is_borrowed']
+        if stat == 0:
+            return 0
     result = sql_select("*", "borrow_log", "book_id = " + book_id)
     if len(result) > 0:
         stu_id = result[len(result) - 1]['stu_id']
