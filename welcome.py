@@ -58,7 +58,7 @@ class Ui_Welcome(object):
 
     def retranslateUi(self, Welcome):
         _translate = QtCore.QCoreApplication.translate
-        Welcome.setWindowTitle(_translate("Welcome", "Form"))
+        Welcome.setWindowTitle(_translate("Welcome", "Welcome"))
         self.pushButton.setText(_translate("Welcome", "管理员"))
         self.label.setText(_translate("Welcome", "欢迎使用图书管理系统"))
         self.label_2.setText(_translate("Welcome", "请刷卡"))

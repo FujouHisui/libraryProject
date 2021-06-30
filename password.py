@@ -54,7 +54,7 @@ class Ui_Password(object):
 
     def retranslateUi(self, Password):
         _translate = QtCore.QCoreApplication.translate
-        Password.setWindowTitle(_translate("Password", "Form"))
+        Password.setWindowTitle(_translate("Password", "Welcome"))
         self.label_2.setText(_translate("Password", "TextLabel"))
         self.label.setText(_translate("Password", "请输入密码"))
         self.pushButton.setText(_translate("Password", "确认"))
