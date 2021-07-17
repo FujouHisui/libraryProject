@@ -142,11 +142,11 @@ class StudentForm(QWidget, Ui_StuInfo):
                     if str(borrow_state) == self.stu_id:
                         self.label_2.setText("")
                         self.cf = ConfirmForm()
-                        self.cf.show_cf(0,self.stu_id,self.book_id)
+                        self.cf.show_cf(0, self.stu_id, self.book_id)
                     elif borrow_state == 0:
                         self.label_2.setText("")
                         self.cf = ConfirmForm()
-                        self.cf.show_cf(1,self.stu_id,self.book_id)
+                        self.cf.show_cf(1, self.stu_id, self.book_id)
                     else:
                         self.label_2.setText("此书已被借出！")
             else:
@@ -176,9 +176,6 @@ class AdminForm(QWidget, Ui_Admin):
         self.bsf = BookSearchForm()
         self.bsf.show()
 
-    def backButton_Click(self):
-        self.close()
-
 
 class BookSearchForm(QWidget, Ui_BookInfo):
     def __init__(self):
@@ -194,11 +191,13 @@ class BookSearchForm(QWidget, Ui_BookInfo):
             if book_name != None:
                 borrow_log = SQLLINK.book_borrow_log(book_id)
                 if len(borrow_log) > 0:
-                    model = get_model(self.title,borrow_log)
+                    model = get_model(self.title, borrow_log)
                     self.tableView.setModel(model)
-                    self.label_2.setText("书名："+book_name)
+                    self.label_2.setText("书名：" + book_name)
         self.pushButton.setEnabled(True)
 
+    def backButton_Click(self):
+        self.close()
 
     def backButton_Click(self):
         self.close()
@@ -223,7 +222,7 @@ class StudentSearchForm(QWidget, Ui_StudentSearch):
                 if len(borrow_log) > 0:
                     model = get_model(self.title, borrow_log)
                     self.tableView.setModel(model)
-                    self.label_3.setText("姓名："+stu_name)
+                    self.label_3.setText("姓名：" + stu_name)
         self.pushButton.setEnabled(True)
 
 
